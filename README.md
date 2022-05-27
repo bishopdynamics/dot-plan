@@ -1,6 +1,24 @@
 # .plan
 Like a blog, but with less effort
 
+## May 27th, 2022 (more)
+
+A little while ago I decided to build an application for my day job that required the use of a UI framework. 
+I decided BEFORE building that application, that I should do some research and build myself an example project to base later work on.
+
+So [here is that example project](https://github.com/bishopdynamics/python3-qt6-base-project). It is a super basic macOS application made using python3 and Qt6. 
+
+After completing that, I felt confident that I could build the needed application for work, so I started talking about it with my boss... who quickly pointed out that Qt6 does not
+have the most favorable licensing for commercial applications.
+
+I reached out to my company's legal department to get some clarification, but they took so darn long to respond that I just bit the bullet and redid all my work in Tk.
+For the record, Tk is the better choice simply because it is built-in with python and does not have licensing issues. Functionality-wise, they are practically identical.
+
+So [here is the new example project](https://github.com/bishopdynamics/python3-tkinter-base-project). 
+It is the exact same example as the Qt6 project, but converted to Tk. If nothing else, these two projects could serve as a reference if you are forced to change frameworks yourself.
+
+enjoy!
+
 ## May 27th, 2022
 
 I've been thinking a lot lately about some of my older projects, and I think it is time for one of them to go into the wild.
