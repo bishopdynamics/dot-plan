@@ -44,6 +44,9 @@ Unless I encounter any issues, both should be GPL licensed. Should be some time 
 
  Stay tuned.
 
+---
+Update: I have published NetbootStudioV1 here: https://github.com/bishopdynamics/NetbootStudioV1
+
 
 ## May 26th, 2022
 
