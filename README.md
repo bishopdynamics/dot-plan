@@ -1,6 +1,26 @@
 # .plan
 Like a blog, but with less effort
 
+## June 9th, 2022
+
+I have been doing a lot of work involving json data recently, and I wanted a utility that let me explore that data visually. 
+There are a number of websites that can do this, as well as a few existing macOS apps.
+
+However, sometimes I am working with kinda-sensitive data, and I do not want to load that up in some random website. 
+Same goes for a random closed-source app. 
+
+Also, none of the apps I found let me load data from command line, which is where I live most of the time.
+
+So, I made a simple utility to generate an interactive treeview from json data, [check it out here](https://github.com/bishopdynamics/TreeView)
+
+Open the app, and it will prompt you to select a file ending in `.json`
+
+There are three ways to use it from terminal:
+* pipe data to stdin: `cat sampledata.json | /Applications/TreeView.app/Contents/MacOS/TreeView`
+* read data from a file: `/Applications/TreeView.app/Contents/MacOS/TreeView sampledata.json`
+* use a file selection dialog: `/Applications/TreeView.app/Contents/MacOS/TreeView`
+
+
 ## May 27th, 2022 (more)
 
 A little while ago I decided to build an application for my day job that required the use of a UI framework. 
