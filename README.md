@@ -15,7 +15,7 @@ Same goes for a random closed-source app.
 
 Also, none of the apps I found let me load data from command line, which is where I live most of the time.
 
-So, I made a simple utility to generate an interactive treeview from json data, [check it out here](https://github.com/bishopdynamics/TreeView)
+So, I made a simple utility to generate an interactive treeview from json data, check out [TreeView](https://github.com/bishopdynamics/TreeView)
 
 Open the app, and it will prompt you to select a file ending in `.json`
 
