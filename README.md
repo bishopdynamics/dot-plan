@@ -1,6 +1,10 @@
 # .plan
 Like a blog, but with less effort
 
+## June 29th, 2022
+
+I decided that I liked [TreeView](https://github.com/bishopdynamics/TreeView) enough to make the same thing for .csv files, named [TableView](https://github.com/bishopdynamics/TableView)
+
 ## June 9th, 2022
 
 I have been doing a lot of work involving json data recently, and I wanted a utility that let me explore that data visually. 
