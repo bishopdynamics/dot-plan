@@ -5,6 +5,8 @@ Like a blog, but with less effort
 
 I decided that I liked [TreeView](https://github.com/bishopdynamics/TreeView) enough to make the same thing for .csv files, named [TableView](https://github.com/bishopdynamics/TableView)
 
+Update: and just tweaked both TreeView and TableView to use fixed-width font (sorry its so much uglier now). Also TableView not sorts `int`, `float`, and `date` values correctly.
+
 ## June 9th, 2022
 
 I have been doing a lot of work involving json data recently, and I wanted a utility that let me explore that data visually. 
