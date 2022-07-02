@@ -1,6 +1,12 @@
 # .plan
 Like a blog, but with less effort
 
+## July 1st, 2022
+
+While trying to find a way to make [TableView](https://github.com/bishopdynamics/TableView) load data faster, I discovered [`pandastable`](https://pandastable.readthedocs.io/en/latest/).
+Not only can `pandastable` load data from a `.csv` file MUCH faster than the naive way I was doing it before, but it also gives me an awesome UI for free!
+
+
 ## June 29th, 2022
 
 I decided that I liked [TreeView](https://github.com/bishopdynamics/TreeView) enough to make the same thing for .csv files, named [TableView](https://github.com/bishopdynamics/TableView)
