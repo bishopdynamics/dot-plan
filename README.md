@@ -1,6 +1,15 @@
 # .plan
 Like a blog, but with less effort
 
+## July 10th, 2022
+
+After playing around with `pandas` to load various formats with [TableView](https://github.com/bishopdynamics/TableView), I decided to make some additions to [TreeView](https://github.com/bishopdynamics/TreeView) as well.
+
+[TreeView](https://github.com/bishopdynamics/TreeView) can now load json or yaml from stdin, 
+and when providing a filename it now supports:`json`, `yaml`, `csv`, `tsv`, `xls`, `xlsx`, `ods`, `sqlite3`
+
+For table-like formats, it will translate to a dictionary with column names as keys, using `pandas.Dataframe.to_dict(orient='records')`. In most cases, [TableView](https://github.com/bishopdynamics/TableView) will be better suited.
+
 ## July 9th, 2022
 
 I pushed two related projects today.
