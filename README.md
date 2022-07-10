@@ -1,6 +1,20 @@
 # .plan
 Like a blog, but with less effort
 
+## July 9th, 2022
+
+I pushed two related projects today.
+
+The first, [Generic Virtual Display Container](https://github.com/bishopdynamics/docker-virtual-display), 
+provides a template for running a desktop app in a docker container, with an virtual display accessible via VNC. 
+It does not do any hardware acceleration, all software rendering. 
+The upside of software rendering is that you can run several of these containers on one host, without conflicting over gpu.
+
+The second, [Chromium Virtual Display Container](https://github.com/bishopdynamics/docker-virtual-chromium), takes advantage of the template to put chromium in kiosk mode
+fullscreen in the virtual display with a given url. This is a cleaned-up version of what I did with the [Kindle Touch Kiosk](https://github.com/bishopdynamics/kindle-touch-kiosk), 
+and I will probably update that repo with this new version, eventually.
+
+
 ## July 1st, 2022
 
 While trying to find a way to make [TableView](https://github.com/bishopdynamics/TableView) load data faster, I discovered [`pandastable`](https://pandastable.readthedocs.io/en/latest/).
