@@ -1,6 +1,12 @@
 # .plan
 Like a blog, but with less effort
 
+## August 4th, 2022
+
+Lex Fridman just posted an awesome 5hr interview with John Carmack. I highly recommend watching: 
+
+[John Carmack: Doom, Quake, VR, AGI, Programming, Video Games, and Rockets | Lex Fridman Podcast #309](https://www.youtube.com/watch?v=I845O57ZSy4)
+
 ## July 10th, 2022
 
 After playing around with `pandas` to load various formats with [TableView](https://github.com/bishopdynamics/TableView), I decided to make some additions to [TreeView](https://github.com/bishopdynamics/TreeView) as well.
