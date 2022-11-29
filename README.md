@@ -1,6 +1,45 @@
 # .plan
 Like a blog, but with less effort
 
+## November 29, 2022
+
+### CueStack
+Today I re-licensed and published [CueStack](https://github.com/bishopdynamics/cuestack), which is a tool that my friends and I used to coordinate various show control elements while producing live-streamed events. I knocked out the majority within a couple weekends (one of my "weekend wonder" projects), and fine-tuned some details later, but it all pretty much worked the way I wanted right off the bat, so I never got around to a big refactoring. I have released it with the hope that someone will find it useful.
+
+I have started working on a complete re-write of CueStack in C++, but that has a long way to go!
+
+### Spotify Car Thing
+I started writing this, and realized I had never talked about my work on the Spotify Car Thing!
+
+The Spotify Car Thing (codename Superbird) is a small device similar to an Android phone. 
+It is supposed to pair with your phone (running Spotify app) and mount on your car dash, giving you a touchscreen interface, some buttons, and a nav wheel to control music playing in your car, without taking your phone of your pocket. 
+
+It was a neat idea, but did not sell well, and so Spotify discontinued the product and put remaining stock up for sale at 30 USD/ea.
+I grabbed several units, thinking that it clearly is some basic linux-powered device that must be hackable.
+
+Superbird has an Amlogic S905D2 SoC, which is quite similar to the Radxa Zero. It runs a Linux 4.9 kernel, with a BuildRoot filesystem, and a custom QT+Web frontend application which renders directly to the screen by framebuffer, with no display server.
+
+At first, it was slow going. A bunch of us started abusing the Issues section of [err4o4's git repo](https://github.com/err4o4/spotify-car-thing-reverse-engineering) as a message board, and posted things as we discovered them. 
+It was quickly discovered that holding buttons 1 & 4 would boot the device into some kind of special mode, and also found [pyamlboot](https://github.com/superna9999/pyamlboot) seemed the right tool to fiddle with it, but we struggled to make anything work.
+
+Finally, the real breakthrough came from [frederic](https://github.com/frederic/superbird-bulkcmd), who figured out how to use a proprietary amlogic `update` utility to put the device into USB Burn Mode, and then make changes to uboot environment, read and write partitions, etc. It was the spark we needed to really open up the device, and things took off from there.
+
+Unfortunately, [frederic's repo](https://github.com/frederic/superbird-bulkcmd) was very limited in that it could only be used from an x86_64 Linux host, due to the dependency on the pre-compiled, closed-source `update` binary from Amlogic. This is when I decided to go back and take a more critical look at [pyamlboot](https://github.com/superna9999/pyamlboot), now that I had a working solution to compare against. 
+
+I was quickly able to do the most basic of things: the `bulkcmd` functionality, which allowed sending commands to uboot on the device. 
+I posted about this in [our improvided forum](https://github.com/err4o4/spotify-car-thing-reverse-engineering/issues/18), but I became more interested in replicating all the functionality from [frederic's repo](https://github.com/frederic/superbird-bulkcmd) in a cross-platform manner.
+
+The result is [superbird-tool](https://github.com/bishopdynamics/superbird-tool), a cross-platform toolkit for hacking the Spotify Car Thing. 
+
+I have also been working on some tangent projects: 
+* [a debian chroot](https://github.com/bishopdynamics/spotify-car-thing_debian_chroot)
+* [backup and recovery tool](https://github.com/bishopdynamics/superbird-backup-and-recovery), a repackaging of the x86_64 Linux tools from frederic with more scripts, and a lot more comments
+* [scripts to compile uboot](https://github.com/bishopdynamics/spotify-car-thing_uboot_builder), which are still incomplete (predates frederic's discoveries)
+
+I am also working on a set of scripts to install debian directly on the system_b partition, with extra button combos to boot system_a, or system_b as desired.
+This setup boots using the original stock kernel, and a debian root filesystem created using debootstrap.
+I will publish this when I get it working well enough; I am still struggling to initialize the framebuffer correctly, and I want to spend some time getting buttons and touch input working perfectly.
+
 ## August 4th, 2022
 
 Lex Fridman just posted an awesome 5hr interview with John Carmack. I highly recommend watching: 
