@@ -1,6 +1,88 @@
 # .plan
 Like a blog, but with less effort
 
+## September 29th, 2023
+
+I've always been really interested in how game engines work, and recently I decided to dive a little deeper by building one myself!
+Naturally, I am a hobbyist, not an engineer at a major studio, so I made a lot of choices just because I thought it would be fun to write.
+
+I went with python because I enjoy working in it, and I wasn't particularly concerned about performance. Since I'm a lot more interested in what goes on under the hood, I actually built the graphics system last, and still haven't done anything for audio. 
+
+I started with a Core, which provides a message bus, and manages lifecycle of Services, which provide everything else. Actually, thats a lie. Like most of my projects, I started out by designing yet-another perfect logging system. In this case I pictured a separate Workbench window, with one tab being a live log. The Core and Services could log messages, which would be published on the message bus. And thats pretty much what I built initially. Once I had that going, it was like: great, so... what are we logging? A solution in search of a problem.
+
+So i came up with this convoluted concept of a "Subsystem" originally, and it got pretty ugly. I later rewrote that whole concept into what I now call a Service, mostly because the two coexisted for a while. I learned a lot of wrong ways to do things with this one, for sure.
+
+Speaking of which, one mistake I made early on was implementing my own "message bus" concept using python Queues. I actually had this working pretty well, and pretty quickly, however that turned out to be dumb luck in that I hadn't encountered any of the many lurking race conditions. But before I figured that out, I started benchmarking and found that a round trip message (send message to another process, which sends it back) was taking betwen 5 and 10 milliseconds! Just in case that sounds pretty decent, remember that if you want to render frames at 60 frames per second, you only have 16.666 milliseconds to do things (or at least the things that happen each frame). So if my graphics system wanted to send or receive any messages within the frame loop, well... that was gonna be a bad time. Of course this is worst-case scenario, and most messaging would be done asynchronously. This was just an excuse to say "We need more speed!"
+
+I decided to replace my homegrown message bus with a more battle-tested solution, and I found that ZMQ fit the bill and, more importantly, had enough documentation and examples that I could figure out how to actually use it. I went down many different roads during this time, and looked at many solutions that had very poor documentation. I'm sure there's still a much better solution out there, but this one got it done well enough.
+
+So at first I tried to just shoehorn ZMQ into my existing message bus, but I thats when I realized I had pretty much just ignored all the problems associated with multithreading. Also, my original message bus was tiered, with all nodes being a child of another, and having children themselves. This was silly in hindsight because it meant that some messages had to hop through several nodes to reach a subscriber, adding a delay with each hop. There were several more things very fundamentally wrong with it, and I continue to be surprised it worked at all. I now know a lot more about how not to write a message bus.
+
+So I wrote a clean new system, with carefully placed locks, and then refactored everything else to fit in the new model. Now the round-trip is under 2 milliseconds! Not going to be doing a *lot* of messaging during the render loop, but at least its doable now, and thats a win.
+
+At this point, I had a basic window (good old Tk), with a bunch of stuff logging thanks to some fake services I stubbed out. Check out the filtering. Since logging messages are objects (not just a string) they contain a bunch of metadata fields, and I did some basic `key:value` filtering. That was fun to implement, but I'm looking forward to re-using that code and never having to rewrite it again.
+
+![Workbench](images/2023-09-29_workbench.png)
+
+You may notice the log messages reference a bunch of stuff I have not talked about yet, I just felt it was time for a screenshot.
+
+Scripting. This turned out to be the most interesting part to me, and I really really love how it turned out. So there is a project called Restricted Python, which helps you create restricted python environment to run third-party code inside. I mean, it was basically perfect out of the box! I actually loosened a lot of the restrictions, because I'm not using this as a sandbox. In that Workbench terminal above, the input field uses the scripting language, which is just python with a few special considerations! There is a global object `Engine` through which scripts can interact with engine resources, primarily the message bus. When the engine starts up, it starts all the services, and the last thing it does is execute the script named `Default.py`.
+
+I also wrote a Config system, which is pretty much just my imagining of how to implement Quake's CVAR system. I liked the idea of having attributes and restrictions, so in my version its possible to restrict read and/or write access to a specific service and/or function name! You can also set a config var to be read-only globally, and control if should be persisted to file. Is this totally necessary? No! Was it fun to write and test? Heck yeah! I also decided that I liked the idea of splitting up where config values are stored (if they are persistent), so I have the concept of a table, and a domain. Use a table just like you would in a database; its a logical grouping of config values. A domain, is really about who owns these values. Some values are user controlled, mainly stuff available in the settings menu; other things belong to the game itself, and others really belong the engine. So three domains: User, Game, Engine. These control where the file is stored on disk. User config is stored in the users documents folder, Engine config is stored with other engine resources, and Game config is stored inside Assets.
+
+Oh yeah, Assets! I had already been thinking about how I would store assets for a long time, long before I even thought about actually writing it, so this one just kind of wrote itself and worked almost exactly the way I wanted right off the bat. There is a folder `assets` under which everything is considered a game asset of some kind. You can organize all your assets in subfolders in whatever way you please, and if you are not interested in packaging for distribution then thats all there is to it. But there is also a package system, that kinda mimics how Quake 3 packages work. Packages are just a zip file. The paths inside are relative to the `assets` folder, laid out just the same. Packages are loaded in alphanumeric order, with a latest-takes-precedence override, with the raw files (not in a package) loaded last, and taking precedence over anything inside packages. So when you are done with v1.0 of your game, you can zip up the contents of the assets folder, and distribute a package named something like `mygame-0001.zip`. Later, you can release a patch or DLC with some updated asset files, and name it like `mygame-0002.zip`. 
+
+A this point, even though I was very pleased with using my scripting language to test things out, I wanted a menu, and something resembling a game. Enter Pygame! 
+
+![The Pencil Game](images/2023-09-29_pencilgame.png)
+
+And then a rudimentary menu
+
+![Moody Menu](images/2023-09-29_flatmenu.png)
+
+If you are wondering what is up with the images, I just grabbed a bunch of random stuff from an attrib-free site. 
+
+I then attempted to introduce 3D to this situation, and broke my brain with transformation matricies
+
+![Cube Menu](images/2023-09-29_cubemenu.png)
+
+I really struggled with the 3D stuff for a while, and that was mostly because I was using ancient OpenGL 1.1 and I was trying to combine a couple tutorials that were incomplete, and in C++
+
+Finally, I had a heart-to-heart with myself in the mirror, and resolved to figure out this graphics stuff properly. I set aside everything I had so far, and started over from scratch, following [this awesome video on YouTube](https://www.youtube.com/watch?v=Ab8TOSFfNp4). I usually hate the robot voice narrated videos, but this one really nailed it by actually walking through every step and explaining along the way. Serious props to Coder Space.
+
+Partway through, I had this awesome vista:
+
+![Rolling Hills of Color](images/2023-09-29_rollingcolors.png)
+
+And by the end I basically had minecraft:
+
+![Basically Minecraft](images/2023-09-29_basicallyminecraft.png)
+
+I gotta say, this project might have stalled right here if I hadn't found this video. Getting these kind of results in a day's worth of work and actually understanding how it works, was incredibly motivating.
+
+And its a good thing too, because after I integrated the resulting graphics system back into the rest of my engine, I took a four-day detour into the land of Imgui.
+
+See, I made what appears to be a common mistake initially. I tried to use the pyimgui package. Unfortunately, that package is a hand-crafted binding, and there are lots of things that are slightly different from the C++ version, but not enough documentation to make that easy to figure out. I eventually discovered imgui_bundle, which is a completely separate project that auto-generates their bindings from the C++ source, so it much more closely matches the C++ version. As a result, we get two benefits: all the C++ tutorials and examples are super easy to translate into python equivalent, and we get access to a whole pile of imgui plugins and/or related projects! 
+
+I pretty quickly re-implemented the "terminal" from my TK Workbench, and fueled by that success, but very frustrated with pyimgui, I embarked upon the journey of migrating everything over to imgui_bundle. Mostly subtle changes to the imgui stuff. The really big effort was getting rid of pygame.
+
+See, imgui_bundle and pygame have conflicting dependencies, and I also didn't actually need anything from pygame. Well, nothing except window management, input management, opengl context management... yeah. The short version is that I switched to moderngl_window, and wrote my own input event system. It took a lot more work than I think it should have, to the point where I actually created a base project for myself with all that work already implemented, so I never have to deal with all that again.
+
+It was a huge pain, but in the end it was totally worth it.
+
+![Totally worth it](images/2023-09-29_consoleandbrowsers.png)
+
+You can see here, I was also in the middle of building a "chunk editor", but that will have to wait for another time.
+
+Check out these sweet performance graphs, thanks to implot, which was super easy to use thanks to imgui_bundle.
+
+![Fancy Plots, thanks to implot](images/2023-09-29_fancyplots.png)
+
+I'm working on a system where I can compose an "area" from "chunks", with an editor for individual chunks. I was kinda picturing it like modular pieces used to assemble a visual dungeon for DnD campaigns. After that I'll tackle some static lighting, some sprites and simple particle effects, and then I feel like I'll have something with which an interesting game can be built. I'll probably put everything up in a repo at that time.
+
+Until then.
+
+
 ## November 29, 2022
 
 ### CueStack
