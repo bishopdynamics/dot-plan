@@ -1,6 +1,25 @@
 # .plan
 Like a blog, but with less effort
 
+## December 19th, 2023
+
+I recently picked superbird (Spotify Car Thing) off the backburner, and spent a bunch of time poking at the framebuffer controls and X11. 
+And it turns out, if you twiddle the right knobs, and whisper the right encantation, and use the latest unstable version of everything, then X11 will totally just work fine with the superbird framebuffer display.
+I wasted a bunch of time fiddling with the scaling settings before, completely by accident, I ran an example `fbset` command and saw the display... just... work. It took me another hour to sort out why it had worked
+and after that I suddenly had a totally viable device! Touch input fell into place pretty quickly after that, this time because the defaults actually worked when my own experiments didn't get in the way. Sigh.
+Later on, when I tried to rotate things, I figured out I had touch input config completely wrong, but eventually got it right and got touch input transformed for landscape mode.
+
+With a working display and touch input, the next step was obvious: get a browser going and throw up a Home Assistant dashboard! And thats what I did.
+
+The data partition on the device is only about 2.3GB, but that was just enough for a minimal rootfs with X11 and chromium.
+
+There is certainly a lot more to do here. The buttons and knob are picked up by X11 automatically, but I haven't done anything with those inputs yet.
+I would like to use the buttons to trigger scenes and the knob to control the overall lighting level, but I haven't decided yet how I want to do that.
+
+What I have so far is good enough for Home Assistant Kiosk, so I put up what I have so far here: [superbird-debian-kiosk](https://github.com/bishopdynamics/superbird-debian-kiosk)
+
+I already put together a bunch of wall kiosks and set them up throughout the house, hopefully that will motivate me to figure out more interesting things to do with them.
+
 ## September 29th, 2023
 
 I've always been really interested in how game engines work, and recently I decided to dive a little deeper by building one myself!
