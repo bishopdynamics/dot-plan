@@ -1,6 +1,14 @@
 # .plan
 Like a blog, but with less effort
 
+## January 2, 2024
+
+I have updated [superbird-debian-kiosk](https://github.com/bishopdynamics/superbird-debian-kiosk) several times in the past couple weeks, and I've reached the point where it generally works for everything I had planned. Home Assistant Lovelace panels work great on the touchscreen, the buttons along the edge recall scenes via Home Assitant API, and the knob controls a light entity via Home Assistant API as well.
+
+I also reorganized files and updated scripts to make it easier to reproduce the image from scratch.
+
+I have four of them deployed throughout the house, and so far they have worked great!
+
 ## December 19th, 2023
 
 I recently picked superbird (Spotify Car Thing) off the backburner, and spent a bunch of time poking at the framebuffer controls and X11. 
