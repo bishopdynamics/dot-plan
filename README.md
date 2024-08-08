@@ -1,6 +1,71 @@
 # .plan
 Like a blog, but with less effort
 
+## August 8, 2024
+
+Today I went ahead and published [Althea](https://github.com/bishopdynamics/althea), which is the node-based editor that I wrote about in my previous post. It's still not much of an actual app, but it has a lot of interesting functionality and I kind of hit a roadblock in terms of where to take it next.
+
+As-is, it serves as a great demo of how to use `imgui_node_editor` in python via `imgui_bundle` and I hope that other people find it useful as such.
+
+## April 7, 2024
+
+For anyone who was interested in that "game engine" project I wrote about last September: I am sorry, I probably will not be publishing it.
+
+I took the messaging system through a few more refactorings, and it became a mess of spagetti code, although I did gain some performance. 
+On top of that, once I had the basic UI, messaging system, and scripting system working, I found I was not particularly interested in working on the
+actual 3D engine. 
+
+However, that project showed me that [`imgui_bundle`](https://github.com/pthom/imgui_bundle) is amazing, and definitely the right way to do `imgui` things from python.
+
+And that led me to my latest project: Althea! Naming things is hard.
+
+One day, while struggling to do some fairly basic lookup/filter/join tasks in Microsoft Excel, 
+and thinking to myself "this would be a lot easier if I just did it in python", I realized that I really
+could just do it myself in python!
+
+I started out by hacking an absurd amount of feature creep into [TableView](https://github.com/bishopdynamics/TableView).
+The awesome module [`pandastable`](https://github.com/dmnfarrell/pandastable) does most of the heavy lifting in that
+project, and there are a bunch of cool tools that make it just-shy of a full Excel replacement on its own!
+
+I dreamed up a system where I would have "data sources" representing tables of data loaded from a file,
+and "virtual data sources" where I could specify some input table(s) and create a list of operations 
+to perform in sequence to produce a new table. 
+The operations would all be little, narrow-scoped functions, with the idea that you could combine them to perform
+more complex operations.
+
+At some point it became obvious that this had grown far beyond the scope of TableView, so forked and renamed it to... 
+DataView. Look, naming things is hard. Here's how that turned out:
+
+![DataView](images/2024-04-11_dataview.png)
+
+It worked, and it proved the general idea was interesing and useful, but I was not happy with the user experience.
+I decided I wanted a node editor system, so I set out to build one from scratch using TK canvas:
+
+![DataView Nodes](images/2024-04-11_datanodes.png)
+
+I actually got pretty far on the node editor, refactored it a couple times, and then refactored it again when I realized I 
+was drawing things in a silly order that made it hard to click on node pins, but I was never happy with it.
+Drawing was pretty inefficient, to the point where 50 nodes would bring the whole thing to a crawl.
+
+I left that project on the backburner for a while, until I discovered that `imgui_bundle` includes another project: [`imgui-node-editor`](https://github.com/thedmd/imgui-node-editor). The demo looked awesome, way ahead of my primitive
+node editor, and a huge portion of the work was handled by the library for me!
+
+On top of the node editor, `imgui_bundle` also provides a huge amount of scaffolding to get you developing quickly.
+So I started over from scratch, cobbled together examples from some of the excellent demos they provide, and soon
+had a pretty respectable looking application, if I do say so myself:
+
+![Althea](images/2024-04-11_althea_nodes.png)
+
+Here is a node that can execute an arbitrary snippet of python:
+
+![Althea Script Node](images/2024-04-11_scriptnode.png)
+
+I have a node that can load (almost) any table-like file into a table (pandas DataFrame),
+another that can do a SQL query against a table (returning another table), and a node for 
+rendering a graph from arbitrary ranges of cells from a table:
+
+![Althea Plots and SQL](images/2024-04-11_plots_sql.png)
+
 ## January 2, 2024
 
 I have updated [superbird-debian-kiosk](https://github.com/bishopdynamics/superbird-debian-kiosk) several times in the past couple weeks, and I've reached the point where it generally works for everything I had planned. Home Assistant Lovelace panels work great on the touchscreen, the buttons along the edge recall scenes via Home Assitant API, and the knob controls a light entity via Home Assistant API as well.
